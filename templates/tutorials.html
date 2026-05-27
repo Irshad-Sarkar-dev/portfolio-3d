@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tutorials - {{ data.name }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .tutorials-section {
+            min-height: 100vh;
+            padding: 6rem 2rem;
+            background: rgba(26, 26, 46, 0.8);
+        }
+
+        .tutorials-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .tutorials-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .tutorials-header h1 {
+            font-size: 2.5rem;
+            color: var(--accent);
+            margin-bottom: 1rem;
+            text-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+        }
+
+        .tutorials-header p {
+            font-size: 1.1rem;
+            color: var(--text-light);
+        }
+
+        .tutorials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .tutorial-card {
+            background: rgba(22, 33, 62, 0.7);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            border-radius: 10px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+        }
+
+        .tutorial-card:hover {
+            border-color: var(--accent);
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.2);
+            transform: translateY(-10px);
+        }
+
+        .tutorial-image {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            overflow: hidden;
+        }
+
+        .tutorial-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .tutorial-content {
+            padding: 1.5rem;
+        }
+
+        .tutorial-category {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            background: rgba(0, 212, 255, 0.1);
+            color: var(--accent);
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .tutorial-title {
+            font-size: 1.3rem;
+            color: var(--accent);
+            margin-bottom: 0.75rem;
+            text-decoration: none;
+        }
+
+        .tutorial-card:hover .tutorial-title {
+            text-decoration: underline;
+        }
+
+        .tutorial-description {
+            color: var(--text-light);
+            font-size: 0.95rem;
+            margin-bottom: 1rem;
+            line-height: 1.5;
+        }
+
+        .tutorial-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: var(--text-light);
+            padding-top: 1rem;
+            border-top: 1px solid rgba(0, 212, 255, 0.1);
+        }
+
+        .tutorial-views {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .tutorial-date {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .read-more {
+            display: inline-block;
+            color: var(--accent);
+            text-decoration: none;
+            margin-top: 1rem;
+            transition: all 0.3s;
+        }
+
+        .read-more:hover {
+            transform: translateX(5px);
+        }
+
+        .empty-message {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-light);
+        }
+
+        .filter-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 0.5rem 1rem;
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .filter-btn:hover,
+        .filter-btn.active {
+            background: var(--accent);
+            color: var(--primary);
+        }
+
+        #canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+    </style>
+</head>
+<body>
+    <div id="canvas-container"></div>
+
+    <nav>
+        <a href="#" class="logo">{{ data.name }}</a>
+        <ul>
+            <li><a href="{{ url_for('index') }}">Home</a></li>
+            <li><a href="{{ url_for('tutorials') }}">Tutorials</a></li>
+            <li><a href="{{ url_for('index') }}#projects">Projects</a></li>
+            <li><a href="{{ url_for('index') }}#contact">Contact</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <section class="tutorials-section">
+            <div class="tutorials-container">
+                <div class="tutorials-header">
+                    <h1>📚 Tutorials & Articles</h1>
+                    <p>Learn from detailed guides and tutorials</p>
+                </div>
+
+                {% if articles %}
+                    <div class="tutorials-grid">
+                        {% for article in articles %}
+                            <a href="{{ url_for('tutorial_detail', article_id=article.id) }}" class="tutorial-card" style="text-decoration: none;">
+                                <div class="tutorial-image">
+                                    {% if article.featured_image %}
+                                        <img src="{{ article.featured_image }}" alt="{{ article.title }}">
+                                    {% else %}
+                                        📖
+                                    {% endif %}
+                                </div>
+                                <div class="tutorial-content">
+                                    <span class="tutorial-category">{{ article.category }}</span>
+                                    <h3 class="tutorial-title">{{ article.title }}</h3>
+                                    <p class="tutorial-description">{{ article.description[:150] }}...</p>
+                                    
+                                    <div class="tutorial-meta">
+                                        <span class="tutorial-views">👁️ {{ article.views }}</span>
+                                        <span class="tutorial-date">📅 {{ article.created_at.strftime('%b %d, %Y') }}</span>
+                                    </div>
+                                    
+                                    <span class="read-more">Read More →</span>
+                                </div>
+                            </a>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="empty-message">
+                        <p>No tutorials available yet. Check back soon! 🚀</p>
+                    </div>
+                {% endif %}
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 {{ data.name }}. All rights reserved.</p>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="{{ url_for('static', filename='js/three-setup.js') }}"></script>
+</body>
+</html>
